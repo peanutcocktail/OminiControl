@@ -5,6 +5,7 @@ from diffusers.pipelines import FluxPipeline
 from diffusers import FluxTransformer2DModel
 import numpy as np
 import os
+import gc
 
 from ..condition import Condition
 from ..generate import seed_everything, generate
@@ -73,6 +74,12 @@ def process_image_and_text(image, text):
         height=512,
         width=512,
     ).images[0]
+
+    gc.collect()
+    if device == "cuda":
+        torch.cuda.empty_cache()
+    elif device == "mps":
+        torch.mps.empty_cache()
 
     return result_img
 
