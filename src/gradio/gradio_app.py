@@ -4,17 +4,23 @@ from PIL import Image, ImageDraw, ImageFont
 from diffusers.pipelines import FluxPipeline
 from diffusers import FluxTransformer2DModel
 import numpy as np
+import os
 
 from ..condition import Condition
 from ..generate import seed_everything, generate
 
 pipe = None
-use_int8 = False
+use_int8 = os.environ.get("USE_INT8", False)
 
+if torch.backends.mps.is_available():
+    device = "mps"
+elif torch.cuda.is_available():
+    device = "cuda"
+else:
+    device = "cpu"
 
 def get_gpu_memory():
     return torch.cuda.get_device_properties(0).total_memory / 1024**3
-
 
 def init_pipeline():
     global pipe
@@ -33,7 +39,7 @@ def init_pipeline():
         pipe = FluxPipeline.from_pretrained(
             "black-forest-labs/FLUX.1-schnell", torch_dtype=torch.bfloat16
         )
-    pipe = pipe.to("cuda")
+    pipe = pipe.to(device)
     pipe.load_lora_weights(
         "Yuanshi/OminiControl",
         weight_name="omini/subject_512.safetensors",
