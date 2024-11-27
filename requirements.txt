@@ -6,4 +6,4 @@ protobuf
 sentencepiece
 gradio
 jupyter
-torchao
+torchao==0.6.1
