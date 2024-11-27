@@ -6,4 +6,4 @@ protobuf
 sentencepiece
 gradio
 jupyter
-torchao
+git+https://github.com/pytorch/ao@egg=torchao
